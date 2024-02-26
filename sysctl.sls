@@ -457,9 +457,8 @@
 	     [miblen (vector-length mib)]
 	     [prefix-match (lambda (m)
 			     (and (vector? m)
-				  (>= (vector-length m) miblen)
-				  (let ([mp (vector-copy m 0 miblen)])
-				    (equal? mib mp))))])
+				  (<= miblen (vector-length m))
+				  (equal? mib (vector-copy m 0 miblen))))])
 	(do ([m mib (sysctl-next m)])
 	    ((not (prefix-match m)))
 	  (set! l (append! l (list m))))
@@ -471,9 +470,8 @@
 	     [miblen (vector-length mib)]
 	     [prefix-match (lambda (m)
 			     (and (vector? m)
-				  (>= (vector-length m) miblen)
-				  (let ([mp (vector-copy m 0 miblen)])
-				    (equal? mib mp))))])
+				  (<= miblen (vector-length m))
+				  (equal? mib (vector-copy m 0 miblen))))])
 	(do ([m mib (sysctl-next-noskip m)])
 	    ((not (prefix-match m)))
 	  (set! l (append! l (list m))))
