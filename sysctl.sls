@@ -5,7 +5,11 @@
 	  sysctl-description
 	  sysctl-label
 	  sysctl-get
-	  sysctl-set)
+	  sysctl-set
+	  sysctl-list
+	  sysctl-list-noskip
+	  sysctl-all
+	  sysctl-all-noskip)
   (import (chezscheme))
 
   (define init (load-shared-object "libc.so.7"))
@@ -27,7 +31,7 @@
       (foreign-ref 'int &errno 0)))
 
   (define strerror
-    (foreign-procedure "strerror" (int) string)) 
+    (foreign-procedure "strerror" (int) string))
 
   (define CTL_MAXNAME 24)
 
@@ -446,4 +450,48 @@
 		      (raise (strerror err))))
 		(foreign-free (ftype-pointer-address qmibp))
 		(foreign-free bufp)))))))
+
+  (define sysctl-list
+    (lambda (mib)
+      (let* ([l (list)]
+	     [miblen (vector-length mib)]
+	     [prefix-match (lambda (m)
+			     (and (vector? m)
+				  (>= (vector-length m) miblen)
+				  (let ([mp (vector-copy m 0 miblen)])
+				    (equal? mib mp))))])
+	(do ([m mib (sysctl-next m)])
+	    ((not (prefix-match m)))
+	  (set! l (append! l (list m))))
+	l)))
+
+  (define sysctl-list-noskip
+    (lambda (mib)
+      (let* ([l (list)]
+	     [miblen (vector-length mib)]
+	     [prefix-match (lambda (m)
+			     (and (vector? m)
+				  (>= (vector-length m) miblen)
+				  (let ([mp (vector-copy m 0 miblen)])
+				    (equal? mib mp))))])
+	(do ([m mib (sysctl-next-noskip m)])
+	    ((not (prefix-match m)))
+	  (set! l (append! l (list m))))
+	l)))
+
+  (define sysctl-all
+    (lambda ()
+      (let ([l (list)])
+	(do ([m '#(1) (sysctl-next m)])
+	    ((not (vector? m)))
+	  (set! l (append! l (list m))))
+	l)))
+
+  (define sysctl-all-noskip
+    (lambda ()
+      (let ([l (list)])
+	(do ([m '#(1) (sysctl-next-noskip m)])
+	    ((not (vector? m)))
+	  (set! l (append! l (list m))))
+	l)))
   )
