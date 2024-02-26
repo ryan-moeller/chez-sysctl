@@ -315,7 +315,7 @@
 				      s)]
 			       ;; CTLTYPE_S64
 			       [#x4 (foreign-ref 'integer-64 bufp 0)]
-			       ;; CTLTYPE_OPAQUE
+			       ;; CTLTYPE_OPAQUE (FIXME: handle some structs like sysctl(8))
 			       [#x5 (let* ([vlen (ftype-ref size_t () lenp)]
 					   [v (make-bytevector vlen)])
 				      (do ([i 0 (+ i 1)])
