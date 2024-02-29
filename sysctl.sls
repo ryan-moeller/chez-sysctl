@@ -161,7 +161,7 @@
 	      (foreign-free (ftype-pointer-address mibp))
 	      (foreign-free (ftype-pointer-address bufp))
 	      (foreign-free (ftype-pointer-address lenp))
-	      (substring name 0 slen))))))
+	      name)))))
 
   (define sysctl-description
     (lambda (mib)
@@ -191,7 +191,7 @@
 	      (foreign-free (ftype-pointer-address mibp))
 	      (foreign-free (ftype-pointer-address bufp))
 	      (foreign-free (ftype-pointer-address lenp))
-	      (substring desc 0 slen))))))
+	      desc)))))
 
   (define sysctl-format
     (lambda (mib)
@@ -223,7 +223,7 @@
 	      (foreign-free (ftype-pointer-address mibp))
 	      (foreign-free (ftype-pointer-address bufp))
 	      (foreign-free (ftype-pointer-address lenp))
-	      (cons kind (substring fmt 0 slen)))))))
+	      (cons kind fmt))))))
 
   (define sysctl-label
     (lambda (mib)
@@ -253,7 +253,7 @@
 	      (foreign-free (ftype-pointer-address mibp))
 	      (foreign-free (ftype-pointer-address bufp))
 	      (foreign-free (ftype-pointer-address lenp))
-	      (substring desc 0 slen))))))
+	      desc)))))
 
   (define sysctl-get
     (lambda (mib)
