@@ -246,14 +246,14 @@
 	      (raise (strerror err)))
 	    (let* ([len (ftype-ref size_t () lenp)]
 		   [slen (- len 1)]
-		   [desc (make-string slen)])
+		   [label (make-string slen)])
 	      (do ([i 0 (+ i 1)])
 		  ((= i slen))
-		(string-set! desc i (ftype-ref char () bufp i)))
+		(string-set! label i (ftype-ref char () bufp i)))
 	      (foreign-free (ftype-pointer-address mibp))
 	      (foreign-free (ftype-pointer-address bufp))
 	      (foreign-free (ftype-pointer-address lenp))
-	      desc)))))
+	      label)))))
 
   (define sysctl-get
     (lambda (mib)
