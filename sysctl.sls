@@ -437,8 +437,8 @@
 				  (equal? mib (vector-copy m 0 miblen))))])
 	(do ([m mib (sysctl-next m)])
 	    ((not (prefix-match m)))
-	  (set! l (append! l (list m))))
-	l)))
+	  (set! l (cons m l)))
+	(reverse l))))
 
   (define sysctl-list-noskip
     (lambda (mib)
@@ -450,22 +450,22 @@
 				  (equal? mib (vector-copy m 0 miblen))))])
 	(do ([m mib (sysctl-next-noskip m)])
 	    ((not (prefix-match m)))
-	  (set! l (append! l (list m))))
-	l)))
+	  (set! l (cons m l)))
+	(reverse l))))
 
   (define sysctl-all
     (lambda ()
       (let ([l (list)])
 	(do ([m '#(1) (sysctl-next m)])
 	    ((not (vector? m)))
-	  (set! l (append! l (list m))))
-	l)))
+	  (set! l (cons m l)))
+	(reverse l))))
 
   (define sysctl-all-noskip
     (lambda ()
       (let ([l (list)])
 	(do ([m '#(1) (sysctl-next-noskip m)])
 	    ((not (vector? m)))
-	  (set! l (append! l (list m))))
-	l)))
+	  (set! l (cons m l)))
+	(reverse l))))
   )
