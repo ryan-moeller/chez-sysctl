@@ -7,7 +7,7 @@ Usage
 > (sysctl-get (sysctl-name->mib "vfs.zfs.blake3_impl"))
 "cycle fastest [generic] sse2 sse41 avx2 "
 > (sysctl-set (sysctl-name->mib "vfs.zfs.blake3_impl") "fastest")
-> (sysctl-get (sysctl-name->mib "vfs.zfs.blake2_impl"))
+> (sysctl-get (sysctl-name->mib "vfs.zfs.blake3_impl"))
 "cycle [fastest] generic sse2 sse41 avx2 "
 >
 ```
