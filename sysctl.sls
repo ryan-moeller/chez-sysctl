@@ -69,8 +69,8 @@
 	      (foreign-free (ftype-pointer-address lenp))
 	      mib)))))
 
-  (define sysctl-next
-    (lambda (mib)
+  (define sysctl-next-impl
+    (lambda (next mib)
       (let* ([len (vector-length mib)]
 	     [miblen (+ 2 len)]
 	     [buflen (* (ftype-sizeof int) CTL_MAXNAME)]
@@ -79,7 +79,7 @@
 	     [lenp (make-ftype-pointer size_t (foreign-alloc (ftype-sizeof size_t)))])
 	(ftype-set! size_t () lenp buflen)
 	(ftype-set! int () mibp 0 CTL_SYSCTL)
-	(ftype-set! int () mibp 1 CTL_SYSCTL_NEXT)
+	(ftype-set! int () mibp 1 next)
 	(do ([i 0 (+ i 1)])
 	    ((= i len))
 	  (ftype-set! int () mibp (+ 2 i) (vector-ref mib i)))
@@ -101,37 +101,13 @@
 	      (foreign-free (ftype-pointer-address lenp))
 	      nxt)))))
 
+  (define sysctl-next
+    (lambda (mib)
+      (sysctl-next-impl CTL_SYSCTL_NEXT mib)))
+
   (define sysctl-next-noskip
     (lambda (mib)
-      (let* ([len (vector-length mib)]
-	     [miblen (+ 2 len)]
-	     [buflen (* (ftype-sizeof int) CTL_MAXNAME)]
-	     [mibp (make-ftype-pointer int (foreign-alloc (* (ftype-sizeof int) miblen)))]
-	     [bufp (make-ftype-pointer int (foreign-alloc buflen))]
-	     [lenp (make-ftype-pointer size_t (foreign-alloc (ftype-sizeof size_t)))])
-	(ftype-set! size_t () lenp buflen)
-	(ftype-set! int () mibp 0 CTL_SYSCTL)
-	(ftype-set! int () mibp 1 CTL_SYSCTL_NEXTNOSKIP)
-	(do ([i 0 (+ i 1)])
-	    ((= i len))
-	  (ftype-set! int () mibp (+ 2 i) (vector-ref mib i)))
-	(if (= -1 (sysctl mibp miblen (ftype-pointer-address bufp) lenp 0 0))
-	    (let ([err (errno)])
-	      (foreign-free (ftype-pointer-address mibp))
-	      (foreign-free (ftype-pointer-address bufp))
-	      (foreign-free (ftype-pointer-address lenp))
-	      (if (= err ENOENT)
-		  #f
-		  (raise (strerror err))))
-	    (let* ([len (/ (ftype-ref size_t () lenp) (ftype-sizeof int))]
-		   [nxt (make-vector len)])
-	      (do ([i 0 (+ i 1)])
-		  ((= i len))
-		(vector-set! nxt i (ftype-ref int () bufp i)))
-	      (foreign-free (ftype-pointer-address mibp))
-	      (foreign-free (ftype-pointer-address bufp))
-	      (foreign-free (ftype-pointer-address lenp))
-	      nxt)))))
+      (sysctl-next-impl CTL_SYSCTL_NEXTNOSKIP mib)))
 
   (define sysctl-name
     (lambda (mib)
