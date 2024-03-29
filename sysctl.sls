@@ -17,9 +17,6 @@
   (define sysctl
     (foreign-procedure "sysctl" ((* int) unsigned void* (* size_t) void* size_t) int))
 
-  (define sysctlbyname
-    (foreign-procedure "sysctlbyname" (string void* (* size_t) void* size_t) int))
-
   (define sysctlnametomib
     (foreign-procedure "sysctlnametomib" (string (* int) (* size_t)) int))
 
