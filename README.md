@@ -2,7 +2,7 @@ Usage
 =====
 
 ```scheme
-> (include "sysctl.ss")
+> (import (sysctl))
 > (sysctl-set (sysctl-name->mib "vfs.zfs.blake3_impl") "generic")
 > (sysctl-get (sysctl-name->mib "vfs.zfs.blake3_impl"))
 "cycle fastest [generic] sse2 sse41 avx2 "
