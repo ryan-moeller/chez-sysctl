@@ -429,43 +429,35 @@
 
   (define sysctl-list
     (lambda (mib)
-      (let* ([l (list)]
-	     [miblen (vector-length mib)]
+      (let* ([miblen (vector-length mib)]
 	     [prefix-match (lambda (m)
 			     (and (vector? m)
 				  (<= miblen (vector-length m))
 				  (equal? mib (vector-copy m 0 miblen))))])
-	(do ([m mib (sysctl-next m)])
-	    ((not (prefix-match m)))
-	  (set! l (cons m l)))
-	(reverse l))))
+	(do ([m mib (sysctl-next m)]
+	     [l '() (cons m l)])
+	    ((not (prefix-match m)) (reverse l))))))
 
   (define sysctl-list-noskip
     (lambda (mib)
-      (let* ([l (list)]
-	     [miblen (vector-length mib)]
+      (let* ([miblen (vector-length mib)]
 	     [prefix-match (lambda (m)
 			     (and (vector? m)
 				  (<= miblen (vector-length m))
 				  (equal? mib (vector-copy m 0 miblen))))])
-	(do ([m mib (sysctl-next-noskip m)])
-	    ((not (prefix-match m)))
-	  (set! l (cons m l)))
-	(reverse l))))
+	(do ([m mib (sysctl-next-noskip m)]
+	     [l '() (cons m l)])
+	    ((not (prefix-match m)) (reverse l))))))
 
   (define sysctl-all
     (lambda ()
-      (let ([l (list)])
-	(do ([m '#(1) (sysctl-next m)])
-	    ((not (vector? m)))
-	  (set! l (cons m l)))
-	(reverse l))))
+      (do ([m '#(1) (sysctl-next m)]
+	   [l '() (cons m l)])
+	  ((not (vector? m)) (reverse l)))))
 
   (define sysctl-all-noskip
     (lambda ()
-      (let ([l (list)])
-	(do ([m '#(1) (sysctl-next-noskip m)])
-	    ((not (vector? m)))
-	  (set! l (cons m l)))
-	(reverse l))))
+      (do ([m '#(1) (sysctl-next-noskip m)]
+	   [l '() (cons m l)])
+	  ((not (vector? m)) (reverse l)))))
   )
