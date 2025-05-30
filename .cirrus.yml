@@ -1,0 +1,52 @@
+freebsd_instance:
+  cpu: 1
+  memory: 1G
+
+task:
+  matrix:
+    - name: releases/amd64/13.5-RELEASE
+      freebsd_instance:
+        image_family: freebsd-13-5
+    - name: releases/amd64/14.2-RELEASE
+      freebsd_instance:
+        image_family: freebsd-14-2
+    - name: snapshots/amd64/15.0-CURRENT
+      freebsd_instance:
+        image_family: freebsd-15-0-snap
+  stateful: false
+  tests_file:
+    path: tests.ss
+    from_contents: |
+      (import (sysctl))
+      (display "get/set an integer\n")
+      (let ((mib (sysctl-name->mib "kern.geom.raid.debug")))
+        (sysctl-set mib 1)
+        (assert (= (sysctl-get mib) 1))
+        ; restore the default
+        (sysctl-set mib 0))
+      (display "get/set a string\n")
+      (let ((mib (sysctl-name->mib "kern.corefile")))
+        (sysctl-set mib "%N.core1")
+        (assert (string=? (sysctl-get mib) "%N.core1"))
+        ; restore the default
+        (sysctl-set mib "%N.core"))
+      (display "compare sequence lengths\n")
+      (assert (< (length (sysctl-all)) (length (sysctl-all-noskip))))
+      (display "a mib is a vector of integers\n")
+      (assert (eq? (sysctl-get '#(1)) 'node))
+      (display "query various properties\n")
+      (let* ((name "kern.conftxt")
+             (mib (sysctl-name->mib name)))
+        (assert (string=? (sysctl-name mib) name))
+        (assert (string=? (sysctl-description mib) "Kernel configuration file"))
+        (assert (equal? (sysctl-format mib) '(2147745795 . "A"))))
+      (display "recursively list children\n")
+      (for-each
+        (lambda (mib)
+          (display (sysctl-name mib))
+          (display ": ")
+          (display (sysctl-get mib))
+          (newline))
+        (sysctl-list (sysctl-name->mib "vm")))
+  setup_script: pkg install -y chez-scheme
+  test_script: chez-scheme tests.ss
