@@ -20,15 +20,11 @@
   (define sysctlnametomib
     (foreign-procedure "sysctlnametomib" (string (* int) (* size_t)) int))
 
-  (define &errno
-    (foreign-entry "errno"))
-
   (define errno
-    (lambda ()
-      (foreign-ref 'int &errno 0)))
+    (foreign-procedure "(cs)s_errno" () int))
 
   (define strerror
-    (foreign-procedure "strerror" (int) string))
+    (foreign-procedure "(cs)s_strerror" (int) scheme-object))
 
   (define CTL_MAXNAME 24)
 
