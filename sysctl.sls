@@ -420,39 +420,45 @@
                 (foreign-free (ftype-pointer-address qmibp))
                 (foreign-free bufp)))))))
 
+  (define sysctl-list-impl
+    (lambda (next done mib)
+      (do ([head '()]
+           [tail '()]
+           [m mib (next m)])
+        ((done m) head)
+        (let ([new-tail (list m)])
+          (if (null? head)
+            (set! head new-tail)
+            (set-cdr! tail new-tail))
+          (set! tail new-tail)))))
+
+  (define prefix-check
+    (lambda (mib)
+      (let ([miblen (vector-length mib)])
+        (lambda (m)
+          (not (and (vector? m)
+                    (<= miblen (vector-length m))
+                    (equal? mib (vector-copy m 0 miblen))))))))
+
   (define sysctl-list
     (lambda (mib)
-      (let* ([miblen (vector-length mib)]
-             [prefix-match (lambda (m)
-                             (and (vector? m)
-                                  (<= miblen (vector-length m))
-                                  (equal? mib (vector-copy m 0 miblen))))])
-        (do ([m mib (sysctl-next m)]
-             [l '() (cons m l)])
-            ((not (prefix-match m)) (reverse l))))))
+      (sysctl-list-impl sysctl-next (prefix-check mib) mib)))
 
   (define sysctl-list-noskip
     (lambda (mib)
-      (let* ([miblen (vector-length mib)]
-             [prefix-match (lambda (m)
-                             (and (vector? m)
-                                  (<= miblen (vector-length m))
-                                  (equal? mib (vector-copy m 0 miblen))))])
-        (do ([m mib (sysctl-next-noskip m)]
-             [l '() (cons m l)])
-            ((not (prefix-match m)) (reverse l))))))
+      (sysctl-list-impl sysctl-next-noskip (prefix-check mib) mib)))
+
+  (define mib-check
+    (lambda (m)
+      (not (vector? m))))
 
   (define sysctl-all
     (lambda ()
-      (do ([m '#(1) (sysctl-next m)]
-           [l '() (cons m l)])
-          ((not (vector? m)) (reverse l)))))
+      (sysctl-list-impl sysctl-next mib-check '#(1))))
 
   (define sysctl-all-noskip
     (lambda ()
-      (do ([m '#(1) (sysctl-next-noskip m)]
-           [l '() (cons m l)])
-          ((not (vector? m)) (reverse l)))))
+      (sysctl-list-impl sysctl-next-noskip mib-check '#(1))))
   )
 
 ;; vim: set et sw=2:
