@@ -35,9 +35,11 @@ Type (debug) to enter the debugger.
 3500
 > (map (lambda (mib) (cons (sysctl-name mib) (sysctl-get mib)))
        (sysctl-list (sysctl-name->mib "vfs.zfs.vol")))
-(("vfs.zfs.vol" . node)
+(("vfs.zfs.vol.request_sync" . 0) ("vfs.zfs.vol.num_taskqs" . 0) ("vfs.zfs.vol.threads" . 0)
+  ("vfs.zfs.vol.mode" . 1)
+  ("vfs.zfs.vol.prefetch_bytes" . 131072)
+  ("vfs.zfs.vol.inhibit_dev" . 0)
   ("vfs.zfs.vol.unmap_enabled" . 1)
-  ("vfs.zfs.vol.recursive" . 0)
-  ("vfs.zfs.vol.mode" . 1))
+  ("vfs.zfs.vol.recursive" . 0))
 >
 ```

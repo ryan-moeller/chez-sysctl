@@ -442,11 +442,11 @@
 
   (define sysctl-list
     (lambda (mib)
-      (sysctl-list-impl sysctl-next (prefix-check mib) mib)))
+      (cdr (sysctl-list-impl sysctl-next (prefix-check mib) mib))))
 
   (define sysctl-list-noskip
     (lambda (mib)
-      (sysctl-list-impl sysctl-next-noskip (prefix-check mib) mib)))
+      (cdr (sysctl-list-impl sysctl-next-noskip (prefix-check mib) mib))))
 
   (define mib-check
     (lambda (m)
