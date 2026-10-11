@@ -1,0 +1,33 @@
+name: "FreeBSD 15.1"
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    name: test on FreeBSD 15.1
+    steps:
+      - uses: actions/checkout@v6
+      - uses: vmactions/freebsd-vm@v1
+        with:
+          release: "15.1"
+          cache-after-prepare: true
+          prepare: |
+            pkg install -y \
+              chez-scheme
+          run: |
+            set -e
+            chez-scheme-script -q <<EOF
+            (import (sysctl))
+            (length (sysctl-all))
+            (length (sysctl-all-noskip))
+            (sysctl-name '#(1))
+            (sysctl-get '#(1))
+            (sysctl-description (sysctl-name->mib "dev.cpu.0.freq"))
+            (sysctl-format (sysctl-name->mib "dev.cpu.0.freq"))
+            (sysctl-get (sysctl-name->mib "dev.cpu.0.freq"))
+            EOF

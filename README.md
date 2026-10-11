@@ -1,6 +1,8 @@
 Chez Scheme Library for FreeBSD sysctl(3)
 =========================================
 
+[![FreeBSD 15.1](https://github.com/ryan-moeller/chez-sysctl/workflows/FreeBSD%2015.1/badge.svg)](https://github.com/ryan-moeller/chez-sysctl/actions/workflows/test.yml)
+
 Usage
 -----
 
