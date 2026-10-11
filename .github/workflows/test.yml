@@ -21,13 +21,14 @@ jobs:
               chez-scheme
           run: |
             set -e
-            chez-scheme-script -q <<EOF
+            chez-scheme --script /dev/stdin <<EOF
             (import (sysctl))
             (length (sysctl-all))
             (length (sysctl-all-noskip))
             (sysctl-name '#(1))
             (sysctl-get '#(1))
-            (sysctl-description (sysctl-name->mib "dev.cpu.0.freq"))
-            (sysctl-format (sysctl-name->mib "dev.cpu.0.freq"))
-            (sysctl-get (sysctl-name->mib "dev.cpu.0.freq"))
+            (define mib (sysctl-name->mib "kern.geom.conftxt"))
+            (sysctl-description mib)
+            (sysctl-format mib)
+            (sysctl-get mib)
             EOF
